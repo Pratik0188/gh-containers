@@ -1,16 +1,21 @@
 name: Deployment (Container)
+
 on:
   push:
     branches:
       - main
       - dev
+
 env:
   CACHE_KEY: node-deps
   MONGODB_DB_NAME: gha-demo
+
 jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
+    container:
+      image: node:16
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb+srv
       MONGODB_CLUSTER_ADDRESS: cluster0.ntrwp.mongodb.net
@@ -19,21 +24,26 @@ jobs:
       PORT: 8080
     steps:
       - name: Get Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
+
       - name: Run server
-        run: npm start & npx wait-on http://127.0.0.1:$PORT # requires MongoDB Atlas to accept requests from anywhere!
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
+
       - name: Run tests
         run: npm test
+
       - name: Output information
-        run: |
-          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+        run: echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -41,7 +51,7 @@ jobs:
       - name: Output information
         env:
           PORT: 3000
-        run: |        
+        run: |
           echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
           echo "MONGODB_USERNAME: $MONGODB_USERNAME"
           echo "${{ env.PORT }}"
