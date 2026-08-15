@@ -25,6 +25,8 @@ jobs:
     services:
       mongodb:
         image: mongo
+        ports:
+          - 27017:27017
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
@@ -54,10 +56,13 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Output information
+      - name: Output DB name
+        run: echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
+
+      - name: Output username
+        run: echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+
+      - name: Output port
         env:
           PORT: 3000
-        run: |
-          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
-          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
-          echo "${{ env.PORT }}"
+        run: echo "PORT: $PORT"
