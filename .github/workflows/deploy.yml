@@ -50,19 +50,23 @@ jobs:
         run: npm test
 
       - name: Output information
-        run: echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+        run: |
+          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Output DB name
-        run: echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
+        run: |
+          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
 
       - name: Output username
-        run: echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+        run: |
+          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
 
       - name: Output port
         env:
           PORT: 3000
-        run: echo "PORT: $PORT"
+        run: |
+          echo "PORT: $PORT"
